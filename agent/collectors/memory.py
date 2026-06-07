@@ -1,4 +1,4 @@
-from base import MetricCollector
+from .base import MetricCollector
 
 
 class MemoryCollector(MetricCollector):

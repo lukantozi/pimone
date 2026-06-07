@@ -1,4 +1,4 @@
-from base import MetricCollector
+from collectors.base import MetricCollector
 import os
 
 

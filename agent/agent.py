@@ -1,46 +1,36 @@
-from cpu import CPUCollector
-from memory import MemoryCollector
-from disk import DiskCollector
+from collectors.cpu import CPUCollector
+from collectors.memory import MemoryCollector
+from collectors.disk import DiskCollector
 from process import ProcessMonitor
 import subprocess
 import time
 
 
-def run_cpu():
-    cpu = CPUCollector()
-    return cpu.format_data()
-
-
-def run_mem():
-    mem = MemoryCollector()
-    return mem.format_data()
-
-
-def run_disk():
-    dc = DiskCollector()
-    return dc.format_data()
-
-
-def run_proc():
-    proc = ProcessMonitor()
-    return list(proc.format_data().items())[:10]
+class Agent:
+    def __init__(self):
+        self.collectors = [
+            CPUCollector(),
+            MemoryCollector(),
+            DiskCollector()
+        ]
+        self.processes = ProcessMonitor()
+    
+    def post(self):
+        return {
+            "cpu": self.collectors[0].format_data(),
+            "memory": self.collectors[1].format_data(),
+            "disk": self.collectors[2].format_data(),
+            "processes": dict(list(self.processes.format_data().items())[:10])
+        }
 
 
 def main():
     while True:
-        mem_data = run_mem()
-        cpu_data = run_cpu()
-        mount_data = run_disk()
-        proc_data = run_proc()
+        data = Agent().post()
         subprocess.run(["clear"])
-        print()
-        print(f"Memory: {mem_data}")
-        print()
-        print(f"CPU: {cpu_data}")
-        print()
-        print(f"Mounts: {mount_data}")
-        print()
-        print(f"Processes: {proc_data}")
+        for d, val in data.items():
+            print(d, val)
+            print()
         time.sleep(1)
 
 
