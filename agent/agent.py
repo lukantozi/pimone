@@ -4,6 +4,10 @@ from collectors.disk import DiskCollector
 from process import ProcessMonitor
 import subprocess
 import time
+import requests
+import json
+
+url = "http://localhost:5000/metrics"
 
 
 class Agent:
@@ -20,18 +24,18 @@ class Agent:
             "cpu": self.collectors[0].format_data(),
             "memory": self.collectors[1].format_data(),
             "disk": self.collectors[2].format_data(),
-            "processes": dict(list(self.processes.format_data().items())[:10])
+            "processes": dict(list(self.processes.format_data().items())[:10]),
         }
 
 
 def main():
     while True:
         data = Agent().post()
-        subprocess.run(["clear"])
-        for d, val in data.items():
-            print(d, val)
-            print()
-        time.sleep(1)
+        response = requests.post(url, json=data)
+        if response.status_code == 200:
+            print("sent ok")
+        else:
+            print("failed to send")
 
 
 if __name__ == "__main__":
