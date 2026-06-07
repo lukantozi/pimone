@@ -35,6 +35,11 @@ class ProcessMonitor(MetricCollector):
 
             proc_elapsed = float(sys_uptime) - starttime
             proc_usage_sec = utime + stime
-            proc_usage_perc = proc_usage_sec * 100 / proc_elapsed
-            print()
-            print(f"{name}({pid})\nin user mode: {utime}s\nin kernel mode: {stime}s\ntotal CPU usage: {proc_usage_perc:.1f}%")
+            proc_usage_perc = proc_usage_sec * 100 / proc_elapsed if proc_elapsed != 0 else 0
+            self.procs[pid] = [name, utime, stime, round(proc_usage_sec, 2), round(proc_usage_perc, 2)]
+        return self.procs
+
+    def format_data(self):
+        procs = self.collect()
+        procs = dict(sorted(procs.items(), key=lambda item: item[1][-1], reverse=True))
+        return procs
