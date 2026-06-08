@@ -1,6 +1,5 @@
-from flask import Flask, jsonify, request
-from store import metric_store
-import requests
+from flask import Flask, request
+from store import rolling
 
 
 app = Flask(__name__)
@@ -10,15 +9,31 @@ app = Flask(__name__)
 def metrics():
     if request.method == "POST":
         data = request.json
-        metric_store.store(data)
+        rolling.store(data, 5)
         return "Success", 200
     else:
         return "Method Not Allowed", 405
 
+
 @app.route("/status", methods=["GET"])
 def status():
     if request.method == "GET":
-        return metric_store.get
+        data = rolling.get
+        print(len(data))
+        return data
+    else:
+        return "Method Not Allowed", 405
+
+
+@app.route("/status/avg-peak", methods=["GET"])
+def average():
+    if request.method == "GET":
+        avg = rolling.average
+        peak = rolling.peak
+        return {
+            "average": avg,
+            "peak": peak,
+        }
     else:
         return "Method Not Allowed", 405
 

@@ -2,10 +2,8 @@ from collectors.cpu import CPUCollector
 from collectors.memory import MemoryCollector
 from collectors.disk import DiskCollector
 from process import ProcessMonitor
-import subprocess
-import time
 import requests
-import json
+
 
 url = "http://localhost:5000/metrics"
 
@@ -31,6 +29,7 @@ class Agent:
 def main():
     while True:
         data = Agent().post()
+        #time.sleep(5)
         response = requests.post(url, json=data)
         if response.status_code == 200:
             print("sent ok")
