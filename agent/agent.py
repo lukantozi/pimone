@@ -3,8 +3,10 @@ from collectors.memory import MemoryCollector
 from collectors.disk import DiskCollector
 from process import ProcessMonitor
 import requests
+import os
 
 
+LOGICAL_CORES = os.cpu_count() or 1
 url = "http://localhost:5000/metrics"
 
 
@@ -23,6 +25,7 @@ class Agent:
             "memory": self.collectors[1].format_data(),
             "disk": self.collectors[2].format_data(),
             "processes": dict(list(self.processes.format_data().items())[:10]),
+            "cores": LOGICAL_CORES,
         }
 
 
