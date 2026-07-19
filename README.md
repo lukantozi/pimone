@@ -65,13 +65,13 @@ The browser dashboard (`pimone.js`) polls `/status` every 3 seconds and:
 Start the Flask server:
 ```bash
 cd server
-python /server/app.py
+python app.py
 ```
 
 Start the agent (separate terminal):
 ```bash
 cd agent
-python /agent/agent.py
+python agent.py
 ```
 
 Then open `http://localhost:5000` in a browser.
